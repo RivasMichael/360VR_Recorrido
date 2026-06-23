@@ -485,20 +485,14 @@
 
                     var imgSrc    = panel.getAttribute('data-card-img');
                     var isPremium = panel.getAttribute('data-premium') === 'true';
-                    var IMG_H = 1.5;
+                    var IMG_H = parseFloat((w / 1.5).toFixed(3)); // 3:2 ratio (fuenteF.webp 5760×3840)
                     var imgEl = null;
                     if (imgSrc) {
-                        if (isPremium) {
-                            imgEl = document.createElement('a-entity');
-                            imgEl.setAttribute('geometry', 'primitive: rounded-rect-top; width: ' + w.toFixed(2) + '; height: ' + IMG_H.toFixed(2) + '; radius: 0.12');
-                            imgEl.setAttribute('material', { src: imgSrc, shader: 'flat' });
-                        } else {
-                            imgEl = document.createElement('a-plane');
-                            imgEl.setAttribute('width', w.toFixed(2));
-                            imgEl.setAttribute('height', IMG_H.toFixed(2));
-                            imgEl.setAttribute('src', imgSrc);
-                            imgEl.setAttribute('shader', 'flat');
-                        }
+                        imgEl = document.createElement('a-plane');
+                        imgEl.setAttribute('width', w.toFixed(2));
+                        imgEl.setAttribute('height', IMG_H.toFixed(2));
+                        imgEl.setAttribute('src', imgSrc);
+                        imgEl.setAttribute('shader', 'flat');
                     }
 
                     var attempts = 0;
@@ -513,14 +507,16 @@
 
                         if (isPremium && imgEl) {
                             /* ── PREMIUM CARD (imagen + badge + divider) ── */
+                            // IP = padding superior antes de la imagen (muestra esquinas redondeadas del card arriba)
+                            var IP = 0.10;
                             var BG = 0.16, BH = 0.21, DG = 0.12, DH = 0.026, TG = 0.14, BP = 0.26;
-                            var h   = IMG_H + BG + BH + DG + DH + TG + th + GAP + dh + BP;
+                            var h   = IP + IMG_H + BG + BH + DG + DH + TG + th + GAP + dh + BP;
                             var topY = h / 2;
 
-                            var imgCY   = topY - IMG_H / 2;
-                            var badgeCY = topY - IMG_H - BG - BH / 2;
-                            var divCY   = topY - IMG_H - BG - BH - DG - DH / 2;
-                            var titlePY = topY - IMG_H - BG - BH - DG - DH - TG;
+                            var imgCY   = topY - IP - IMG_H / 2;
+                            var badgeCY = topY - IP - IMG_H - BG - BH / 2;
+                            var divCY   = topY - IP - IMG_H - BG - BH - DG - DH / 2;
+                            var titlePY = topY - IP - IMG_H - BG - BH - DG - DH - TG;
                             var descPY  = titlePY - th - GAP;
 
                             // Sombra redondeada
@@ -530,15 +526,17 @@
                             shadowEl.setAttribute('position', '0.09 -0.09 -0.06');
                             panel.appendChild(shadowEl);
 
-                            // Fondo blanco con esquinas redondeadas
+                            // Fondo blanco con esquinas redondeadas (cubre TODO el card)
                             var bgEl = document.createElement('a-entity');
                             bgEl.setAttribute('geometry', 'primitive: rounded-rect; width: ' + w.toFixed(2) + '; height: ' + h.toFixed(2) + '; radius: 0.12');
                             bgEl.setAttribute('material', 'color: #FFFFFF; opacity: 1');
                             bgEl.setAttribute('position', '0 0 -0.01');
                             panel.appendChild(bgEl);
 
-                            // Imagen superior (esquinas superiores redondeadas)
-                            imgEl.setAttribute('position', '0 ' + imgCY.toFixed(3) + ' 0.03');
+                            // Imagen a ancho completo, debajo del margen IP (las esquinas superiores del fondo blanco quedan visibles)
+                            imgEl.setAttribute('width', w.toFixed(2));
+                            imgEl.setAttribute('height', IMG_H.toFixed(2));
+                            imgEl.setAttribute('position', '0 ' + imgCY.toFixed(3) + ' 0.02');
                             panel.appendChild(imgEl);
 
                             // Badge (fondo rosa claro + texto rojo)
@@ -1412,7 +1410,7 @@
             'panel-info-fuera': {
                 title: 'EXTERIOR ESAN',
                 desc: 'Amplias áreas verdes y zonas de tránsito que destacan nuestra moderna arquitectura.',
-                image: 'imagenes/fuera de esan.jpg',
+                image: 'imagenes/Fotos/fuenteF.webp',
                 scene: 'EXTERIOR ESAN'
             }
         };
@@ -2928,7 +2926,7 @@
             <a-image src="#img-info-icon" position="5 2.5 -8" scale="0.8 0.8 0.8" look-at="[camera]"
                 class="icono-hotspot" hotspot-info="target: #panel-info-fuera; action: toggle">
             </a-image>
-            <a-entity id="panel-info-fuera" visible="false" smooth-follow card-style scale="1 1 1" data-card-img="imagenes/fuera de esan.jpg" data-premium="true">
+            <a-entity id="panel-info-fuera" visible="false" smooth-follow card-style scale="1 1 1" data-card-img="imagenes/Fotos/fuenteF.webp" data-premium="true">
                 <a-plane color="#FFFFFF" opacity="0.95" width="4" height="1.6" position="0 0 0"></a-plane>
                 <a-text value="EXTERIOR ESAN" color="#E3173E" align="center" width="7" position="0 1.25 0.01"></a-text>
                 <a-text
